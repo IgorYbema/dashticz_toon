@@ -1,0 +1,3 @@
+module apps.dashticz
+dashticzApp 1.0 dashticzApp.qml
+dashticzScreen 1.0 dashticzScreen.qml
