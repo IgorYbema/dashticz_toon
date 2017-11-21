@@ -1,2 +1,2 @@
-# dashticz_toon
+# Dashticz
 Dashticz variant for Eneco Toon

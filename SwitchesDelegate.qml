@@ -4,7 +4,7 @@ import qb.components 1.0
 
 Rectangle
 {
-	width: 265
+	width: 225
 	height: 50
 	color: colors.canvas
 	property string kpiPrefix: "switchesFilterScreen."
@@ -16,7 +16,7 @@ Rectangle
 	StandardButton {
 		id: switchesButton
 		controlGroup: switchesFilterGroup
-		width: 220
+		width: 180
 		height: 45
 		radius: 5
 		text: name

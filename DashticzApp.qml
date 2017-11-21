@@ -14,7 +14,8 @@ App {
 	property url thumbnailIcon: "./drawables/dashticzIcon.png"
 	property url dashticzScreenUrl : "DashticzScreen.qml"
 	property url dashticzSettingsUrl : "DashticzSettings.qml"
-
+	property url switchStatusIcon : "./drawables/Light48_Off.png"
+	
 	property DashticzSettings dashticzSettings
 	property variant settings: { 
 		"domoticzEnable": false, 
@@ -30,7 +31,6 @@ App {
 	}
 
 	Component.onCompleted: {
-		// load the settings on completed is recommended instead of during init
 		loadSettings(); 
 	}
 
@@ -55,7 +55,7 @@ App {
 	}
 
 	function getDomoticz() {
-		app.switchStatusIcon = "./drawables/Light48_On.png";
+		this.switchStatusIcon = "./drawables/Light48_On.png";
 	}
 
 	Timer {
