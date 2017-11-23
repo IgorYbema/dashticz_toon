@@ -10,7 +10,7 @@ App {
 	// By making them a URL type property they will automatically be converted to full paths,
 	// preventing problems when passing them around to code that comes from a different path.
 	property url trayUrl : "DashticzTray.qml";
-	property url tileUrl : "DashticzTile.qml";
+	property url tileUrl : "./tiles/DashticzTile.qml";
 	property url thumbnailIcon: "./drawables/dashticzIcon.png"
 	property url dashticzScreenUrl : "DashticzScreen.qml"
 	property url dashticzSettingsUrl : "DashticzSettings.qml"

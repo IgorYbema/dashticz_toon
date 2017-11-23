@@ -1,3 +1,5 @@
+var thumbnailObjsByWidget = []
+
 var tileCategories = {
 	solar				: {weight: 50,   instance: undefined, name: qsTr("Solar")},
 	power				: {weight: 100,  instance: undefined, name: qsTr("Power")},

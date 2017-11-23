@@ -5,7 +5,7 @@ import BasicUIControls 1.0;
 
 
 Tile {
-	id: easyenergyTile
+	id: dashticzTile
 
 	function init() {}
 
