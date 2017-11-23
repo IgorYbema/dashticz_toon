@@ -16,52 +16,6 @@ Screen {
 	property url emptyTileUrl: "EmptyTile.qml"
 	property url tilePageUrl: "TilePage.qml"
 
-	function appendNewTile(tileWidgetInfo) {
-		var emptyPos = getFirstEmptyTilePos();
-		createTile(tileWidgetInfo, emptyPos[0], emptyPos[1]);
-	}
-	
-	function createTile(tileWidgetInfo, page, position, uuid) {
-		var tile;
-		var tileUrl = tileWidgetInfo.url;
-		if (!tileWidgetInfo) tileWidgetInfo  = {context: null};
-		var requestedPageContainer = tileContainer.children[page];
-		var nextPageContainer = tileContainer.children[page + 1];
-
-		// create a new tile dynamically
-		tile = util.loadComponent(tileWidgetInfo.url, requestedPageContainer, {app: tileWidgetInfo.context, widgetInfo: tileWidgetInfo, widgetArgs: tileWidgetInfo.args});
-
-		// assign page number and position to the tile
-		tile.page = page;
-		tile.position = position;
-		tile.homeApp = app;
-
-		// update tile configuration
-		updateTileConfig(tileUrl, tile, uuid);
-
-		// swap tiles if neccesarry
-		if (requestedPageContainer.children.length > position) {
-			replaceNewTile(requestedPageContainer, position);
-		}
-
-		// if next page does not exist - create it
-		if (!(requestedPageContainer.empty) && nextPageContainer === undefined) {
-			createPage();
-		}
-
-		if (tile === null) {
-			return;
-		} else {
-
-			if (tileWidgetInfo.context)
-				tile.initWidget(tileWidgetInfo);
-			else
-				tile.app = app;
-		}
-		
-		tilesCount++;
-	}
-
 	function createPage() {
 		var newPage = util.loadComponent(tilePageUrl, tileContainer, {});
 
@@ -118,11 +72,15 @@ Screen {
 		}
 	}
 	
-	onShown: {
+	function init(app) {
+		this.app=app;
 		createPage();
+	}
+	
+	onShown: {
 		widgetNavBar.navigateBtn(0);
 	}
-
+	
 	StandardButton {
 		id: btnConfigScreen
 		width: 100
@@ -173,7 +131,7 @@ Screen {
 		}
 		opacity: colors.opaqueOnActive
 		maxPageCount: 14
-		pageCount: (pagecount+1)
+		pageCount: pagecount
 		shadowBarButtons: true
 		onNavigate: navigatePage(page)
 	}

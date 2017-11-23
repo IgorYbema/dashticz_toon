@@ -4,13 +4,13 @@ import qb.components 1.0
 import BasicUIControls 1.0;
 
 Tile {
-	id: switchTile
+	id: tuinhuisTile
 	width:165
 	height:58
 	
 	property string switchIcon:"./drawables/bulbyellow_off.png";
-	property string idx:"204";
-	property string title:"Eettafel";
+	property string idx:"117";
+	property string title:"Tuinhuis";
 	property string status:"Off";
 	
 	property string username: "YWRtaW4=";
@@ -22,6 +22,13 @@ Tile {
 		if(status=="Off") domoticzCall("type=command&param=switchlight&idx="+idx+"&switchcmd=On","On");
 		else domoticzCall("type=command&param=switchlight&idx="+idx+"&switchcmd=Off","Off");
 	}
+
+	function checkStatus(){
+		switchIcon = "./drawables/bulbyellow_off.png";
+		if (status == "On") {
+			switchIcon = "./drawables/bulbyellow_on.png";
+		}
+	}
 	
 	function domoticzCall(url,onoff) {
 		var xmlhttp = new XMLHttpRequest();
@@ -30,11 +37,7 @@ Tile {
 		
 		status = onoff
 		checkStatus();
-	}
-	
-	function checkStatus(){
-		switchIcon = "./drawables/bulbyellow_off.png";
-		if (status == "On") switchIcon = "./drawables/bulbyellow_on.png";
+		
 	}
 
 	Item {
