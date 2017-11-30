@@ -1,17 +1,24 @@
 import QtQuick 1.1
 import qb.components 1.0
 import qb.base 1.0
+import HttpRequest 1.0
 import "dashticz.js" as DashticzJS 
 
 
 App {
 	id: root
 	
-	property url trayUrl : "DashticzTray.qml";
-	property url tileUrl : "./tiles/DashticzTile.qml";
+	property url trayUrl : "DashticzTray.qml"
+	property url tileUrl : "./DashticzTile.qml"
 	property url thumbnailIcon: "./drawables/dashticzIcon.png"
 	property url dashticzScreenUrl : "DashticzScreen.qml"
 	property url dashticzSettingsUrl : "DashticzSettings.qml"
+	
+	property variant devices : []
+	property bool devicesReceived: false
+	
+	property string username: "YWRtaW4="
+	property string password: "U21hcnQyMDA0cg=="
 	
 	property DashticzSettings dashticzSettings
 	property variant settings: { 
@@ -23,7 +30,7 @@ App {
 		registry.registerWidget("screen", dashticzScreenUrl, this);
 		registry.registerWidget("screen", dashticzSettingsUrl, this, "dashticzSettings");
 		registry.registerWidget("systrayIcon", trayUrl, this, "dashticzTray");
-		registry.registerWidget("tile", tileUrl, this, null, {thumbLabel: "Dashticz", thumbIcon: thumbnailIcon, thumbCategory: "general", thumbWeight: 30, baseTileWeight: 10, baseTileSolarWeight: 10, thumbIconVAlignment: "center"});
+		//registry.registerWidget("tile", tileUrl, this, null, {thumbLabel: "Dashticz", thumbIcon: thumbnailIcon, thumbCategory: "general", thumbWeight: 30, baseTileWeight: 10, baseTileSolarWeight: 10, thumbIconVAlignment: "center"});
 	}
 
 	Component.onCompleted: {
@@ -40,7 +47,6 @@ App {
 						if (!temp[setting])  { temp[setting] = settings[setting]; } // use default if no saved setting exists
 					}
 					settings = temp;
-					collectDomoticzTimer.interval = 3000; // set refresh of timer after 10 sec to get new tariffs in case of parameter changed after load
 				}
 			}
 		}
@@ -49,11 +55,28 @@ App {
 
 
 	}
-
-	function getDomoticz() {
-		
+	
+	function domoticzCall(url,onoff) {
+		var xmlhttp = new XMLHttpRequest();
+		xmlhttp.open("GET", "http://192.168.1.3:8084/json.htm?username="+username+"&password="+password+"&"+url, true);
+		xmlhttp.send();
 	}
-
+	
+	function getDevices() {
+		var xmlhttp = new XMLHttpRequest();
+		xmlhttp.onreadystatechange=function() {
+			if (xmlhttp.readyState == 4) {
+				if (xmlhttp.status == 200) {
+					var res = JSON.parse(xmlhttp.responseText);
+					devices = res["result"]
+					devicesReceived = true;
+				}
+			}
+		}
+		xmlhttp.open("GET", "http://192.168.1.3:8084/json.htm?username="+username+"&password="+password+"&type=devices&favorite=1&filter=all&used=true&order=Name", true);
+		xmlhttp.send();
+	}
+	
 	Timer {
 		id: collectDomoticzTimer
 		interval: 10000
@@ -61,8 +84,7 @@ App {
 		running: true
 		repeat: true
 		onTriggered: {
-			collectDomoticzTimer.interval = 10000;
-			getDomoticz();
+			getDevices();
 		}
 	}
 

@@ -1,5 +1,4 @@
 import QtQuick 1.1
-
 import qb.components 1.0
 
 Screen {
@@ -9,130 +8,60 @@ Screen {
 	
 	property DashticzApp app;
 	
-	property int tilesCount: 0
-	property int pagecount: 0
-	property int currentPage: 0
-
-	property url emptyTileUrl: "EmptyTile.qml"
-	property url tilePageUrl: "TilePage.qml"
-
-	function createPage() {
-		var newPage = util.loadComponent(tilePageUrl, tileContainer, {});
-
-		if (newPage === null) {
-			return;
-		}
-
-		for (var i = 0; i < newPage.children.length; i++) {
-			newPage.children[i].homeApp = app;
-			newPage.children[i].page = pagecount;
-			newPage.children[i].position = i;
-		}
-
-		pagecount = pagecount + 1;
-	}
-	
-	function navigatePage(page) {
-		var lastCurrentPage = currentPage;
-		currentPage = page;
-		var endPage = pagecount;
-		endPage -= 1;
-		var removePage = false;
-
-		var lastPageContainer = tileContainer.children[lastCurrentPage];
-
-		// if previous page is not a last page and is empty - remove it
-		if (lastCurrentPage !== endPage && lastPageContainer.empty) {
-			lastPageContainer.visible = false;
-			lastPageContainer.parent = null;
-			lastPageContainer.destroy();
-			pagecount--;
-			removePage = true;
-			for (var i = lastCurrentPage; i < endPage; ++i) {
-				for (var j = 0; j < 4; ++j) {
-					tileContainer.children[i].children[j].page -= 1;
-				}
-			}
-		}
-
-		if (currentPage === endPage && removePage) {
-			currentPage = pagecount - 1;
-			widgetNavBar.navigateBtn(currentPage);
-		} else if (lastCurrentPage < currentPage && removePage) {
-			currentPage -= 1;
-			widgetNavBar.navigateBtn(currentPage);
-		} else {
-			// 2 pixel offset because of tile-shadow (page display must be 2 pixels wider than the actual page is)
-			tileContainerParent.contentX = currentPage * (leftPanel.width - 2 + tileContainer.spacing);
-			var currentPageContainer = tileContainer.children[currentPage];
-
-			for (i = 0; i < currentPageContainer.children.length; i++) {
-				currentPageContainer.children[i].pageChange(currentPage);
-			}
-		}
-	}
-	
-	function init(app) {
-		this.app=app;
-		createPage();
-	}
-	
 	onShown: {
-		widgetNavBar.navigateBtn(0);
+		if (!app.devicesReceived){
+			app.getDevices();
+		}
 	}
 	
-	StandardButton {
-		id: btnConfigScreen
-		width: 100
-		height: 45
-		text: "Instellingen"
+	Row {
+		id:btnRow
+		spacing:10
 		anchors {
-			bottom: widgetNavBar.bottom
+			top: parent.top
+			topMargin: 20
 			left: parent.left
 			leftMargin: 32
 		}
-		onClicked: {
-			if (app.dashticzSettings) {
-				app.dashticzSettings.show();
+
+		StandardButton {
+			id: btnConfigScreen
+			width: 100
+			height: 45
+			text: "Instellingen"
+			enabled: app.devicesReceived
+			onClicked: {
+				if (app.dashticzSettings) {
+					app.dashticzSettings.show();
+				}
 			}
 		}
 	}
 
-	UnFlickable {
-		id: tileContainerParent
-		width: parent.width
-		height: 330
+	Grid {
+		spacing:10
+		columns: 4
+		rows:5
+		visible: app.devicesReceived
 		anchors {
+			top: btnRow.bottom
+			topMargin: 10
 			left: parent.left
-			top: parent.top
-			topMargin: 22
+			leftMargin: 32
 		}
-		boundsBehavior: Flickable.StopAtBounds
-		flickableDirection: Flickable.HorizontalFlick
-		clip: true
 
-		Row {
-			id: tileContainer
-			anchors {
-				fill: parent
-				leftMargin: 32
-				rightMargin: anchors.leftMargin
+		Repeater {
+			id: switches
+			model: app.devices
+			onItemAdded: {
+				console.log("Dashticz IDX Added: "+ app.devices[index]['idx']);
+           	}
+		   	SwitchItem {
+				idx: app.devices[index]['idx']
+				title: app.devices[index]['Name']
+				status: app.devices[index]['Data']
+				lastupdate: app.devices[index]['LastUpdate']
 			}
-			spacing: 10
 		}
-	}
-
-	DottedSelector {
-		id: widgetNavBar
-		anchors {
-			horizontalCenter: tileContainerParent.horizontalCenter
-			verticalCenter: parent.bottom
-			verticalCenterOffset: -33
-		}
-		opacity: colors.opaqueOnActive
-		maxPageCount: 14
-		pageCount: pagecount
-		shadowBarButtons: true
-		onNavigate: navigatePage(page)
 	}
 }
