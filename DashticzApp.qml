@@ -19,8 +19,8 @@ App {
 	
 	property DashticzSettings dashticzSettings
 	property variant settings: { 
-		"domoticzHost": "",
-		"domoticzPort": "",
+		"domoticzHost": "192.168.1.10",
+		"domoticzPort": "8080",
 		"domoticzUsername" : "",
 		"domoticzPassword" : "",
 	}
