@@ -33,13 +33,9 @@ App {
 		//registry.registerWidget("tile", tileUrl, this, null, {thumbLabel: "Dashticz", thumbIcon: thumbnailIcon, thumbCategory: "general", thumbWeight: 30, baseTileWeight: 10, baseTileSolarWeight: 10, thumbIconVAlignment: "center"});
 	}
 
-	Component.onCompleted: {
-		loadSettings(); 
-	}
-
 	function loadSettings()  {
 		var settingsFile = new XMLHttpRequest();
-		settingsFile.onreadystatechange = function() {
+		settingsFile.onreadystatechange = function(){
 			if (settingsFile.readyState == XMLHttpRequest.DONE) {
 				if (settingsFile.responseText.length > 0)  {
 					var temp = JSON.parse(settingsFile.responseText);
@@ -48,44 +44,30 @@ App {
 					}
 					settings = temp;
 				}
+				getDevices();
 			}
 		}
 		settingsFile.open("GET", "file:///HCBv2/qml/apps/dashticz/dashticz.settings", true);
 		settingsFile.send();
-
-
 	}
 	
 	function domoticzCall(url,onoff) {
 		var xmlhttp = new XMLHttpRequest();
-		xmlhttp.open("GET", "http://192.168.1.3:8084/json.htm?username="+username+"&password="+password+"&"+url, true);
+		xmlhttp.open("GET", "http://"+settings.domoticzHost+":"+settings.domoticzPort+"/json.htm?username="+username+"&password="+password+"&"+url, true);
 		xmlhttp.send();
 	}
 	
 	function getDevices() {
 		var xmlhttp = new XMLHttpRequest();
 		xmlhttp.onreadystatechange=function() {
-			if (xmlhttp.readyState == 4) {
-				if (xmlhttp.status == 200) {
-					var res = JSON.parse(xmlhttp.responseText);
-					devices = res["result"]
-					devicesReceived = true;
-				}
+			if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+				var res = JSON.parse(xmlhttp.responseText);
+				devices = res["result"]
+				devicesReceived = true;
 			}
 		}
-		xmlhttp.open("GET", "http://192.168.1.3:8084/json.htm?username="+username+"&password="+password+"&type=devices&favorite=1&filter=all&used=true&order=Name", true);
+		xmlhttp.open("GET", "http://"+settings.domoticzHost+":"+settings.domoticzPort+"/json.htm?username="+username+"&password="+password+"&type=devices&favorite=1&filter=all&used=true&order=Name", true);
 		xmlhttp.send();
-	}
-	
-	Timer {
-		id: collectDomoticzTimer
-		interval: 10000
-		triggeredOnStart: true 
-		running: true
-		repeat: true
-		onTriggered: {
-			getDevices();
-		}
 	}
 
 }

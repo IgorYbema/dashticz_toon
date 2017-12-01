@@ -9,46 +9,26 @@ Screen {
 	hasHomeButton: false
 	hasCancelButton: true
 
-
-	property bool firstShown: true;  // we need this because exiting a keyboard will load onShown again. Without this the input will be overwritten with the app settings again
-
-
 	screenTitle: "Dashticz Instellingen"
 
 	onShown: {
 		addCustomTopRightButton("Opslaan");
-		if (firstShown) {  // only update the input boxes if this is the first time shown, not while coming back from a keyboard input
-			domoticzToggle.isSwitchedOn = app.settings.domoticzEnable;
-			domoticzHostLabel.inputText = app.settings.domoticzHost;
-			domoticzPortLabel.inputText = app.settings.domoticzPort;
-			firstShown = false;
-		}
+		domoticzHostLabel.inputText = app.settings.domoticzHost;
+		domoticzPortLabel.inputText = app.settings.domoticzPort;
 	}
-
-	onCanceled: {
-		firstShown = true; // if canceled we can overwrite the input boxes again with the app settings 
-	}
-
-
 
 	onCustomButtonClicked: {
 		hide();
 		var temp = app.settings; // updating app property variant is only possible in its whole, not by elements only, so we need this
-		temp.domoticzEnable = domoticzToggle.isSwitchedOn; 
 		temp.domoticzHost = domoticzHostLabel.inputText;
 		temp.domoticzPort = domoticzPortLabel.inputText;
-		temp.domoticzIdx = domoticzIdxLabel.inputText;
 		app.settings = temp;
 
-		firstShown = true; // we have saved the settings so on a fresh settings screen we can load the input boxes with the new app settings
-
-		// save the new app settings into the json file
 		var saveFile = new XMLHttpRequest();
 		saveFile.open("PUT", "file:///HCBv2/qml/apps/dashticz/dashticz.settings");
 		saveFile.send(JSON.stringify(app.settings));
-
-		app.getDomoticz(); // fetch new data on each save
-
+		
+		app.getDevices();
 	}
 
 
@@ -92,32 +72,6 @@ Screen {
 		}
 	}
 
-	function updateDomoticzIdxLabel(text) {
-		if (text) {
-			if (text.match(/^[0-9]*$/)) {
-				domoticzIdxLabel.inputText = text;
-			}
-		}
-	}
-
-	// toggles
-	Text {
-		id: checkTest
-		x: 15
-		y: 10
-		font.pixelSize: 16
-		font.family: qfont.semiBold.name
-		text: "Check test"
-	}
-
-	OnOffToggle {
-		id: domoticzToggle
-		height: 36
-		anchors.left: checkTest.right
-		anchors.leftMargin: 20
-		anchors.top: checkTest.top
-		leftIsSwitchedOn: false
-	}
 
 	// domoticz
 	Text {
@@ -126,10 +80,10 @@ Screen {
 		font.family: qfont.semiBold.name
 		text: "Domoticz URL"
 		anchors {
-			left: domoticzToggle.right
-			leftMargin: 20
-			top: domoticzToggle.top
-			topMargin: 0 
+			top: parent.top
+			topMargin: 20
+			left: parent.left
+			leftMargin: 32
 		}
 	}
 	EditTextLabel {
