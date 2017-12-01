@@ -15,19 +15,23 @@ Screen {
 		addCustomTopRightButton("Opslaan");
 		domoticzHostLabel.inputText = app.settings.domoticzHost;
 		domoticzPortLabel.inputText = app.settings.domoticzPort;
+		domoticzUsernameLabel.inputText = app.settings.domoticzUsername;
+		domoticzPasswordLabel.inputText = app.settings.domoticzPassword;
 	}
 
 	onCustomButtonClicked: {
-		hide();
 		var temp = app.settings; // updating app property variant is only possible in its whole, not by elements only, so we need this
 		temp.domoticzHost = domoticzHostLabel.inputText;
 		temp.domoticzPort = domoticzPortLabel.inputText;
+		temp.domoticzUsername = domoticzUsernameLabel.inputText;
+		temp.domoticzPassword = domoticzPasswordLabel.inputText;
 		app.settings = temp;
 
 		var saveFile = new XMLHttpRequest();
 		saveFile.open("PUT", "file:///HCBv2/qml/apps/dashticz/dashticz.settings");
 		saveFile.send(JSON.stringify(app.settings));
 		
+		hide();
 		app.getDevices();
 	}
 
@@ -51,7 +55,7 @@ Screen {
 				return null;
 			}
 			else {
-				return {content: "Poort nummer onjuist"};
+				return {content: "Poortnummer onjuist"};
 			}
 			return null;
 		}
@@ -72,6 +76,14 @@ Screen {
 		}
 	}
 
+	function updateDomoticzUsernameLabel(text) {
+		if (text) domoticzUsernameLabel.inputText = text;
+	}
+
+	function updateDomoticzPasswordLabel(text) {
+		if (text) domoticzPasswordLabel.inputText = text;
+	}
+
 
 	// domoticz
 	Text {
@@ -83,7 +95,7 @@ Screen {
 			top: parent.top
 			topMargin: 20
 			left: parent.left
-			leftMargin: 32
+			leftMargin: 16
 		}
 	}
 	EditTextLabel {
@@ -156,5 +168,73 @@ Screen {
 	}
 
 
+	EditTextLabel {
+		id: domoticzUsernameLabel
+		width: 350
+		height: 35
+		leftText: "Gebruikersnaam"
+		leftTextAvailableWidth: 200
+
+		anchors {
+			left: domoticzPortLabel.left
+			top: domoticzPortLabel.bottom                       
+			topMargin: 10
+		}
+
+		onClicked: {
+			qkeyboard.open("Gebruikersnaam", domoticzUsernameLabel.inputText, updateDomoticzUsernameLabel);
+		}
+	}
+	IconButton {
+		id: domoticzUsernameLabelButton;
+		width: 40
+		iconSource: "./drawables/edit.png"
+
+		anchors {
+			left: domoticzUsernameLabel.right
+			leftMargin: 6
+			top: domoticzUsernameLabel.top
+		}
+
+		bottomClickMargin: 3
+		onClicked: {
+			qkeyboard.open("Gebruikersnaam", domoticzUsernameLabel.inputText, updateDomoticzUsernameLabel);
+		}
+	}
+
+	
+	EditTextLabel {
+		id: domoticzPasswordLabel
+		width: 350
+		height: 35
+		leftText: "Wachtwoord"
+		leftTextAvailableWidth: 200
+
+		anchors {
+			left: domoticzUsernameLabel.left
+			top: domoticzUsernameLabel.bottom                       
+			topMargin: 10
+		}
+
+		onClicked: {
+			qkeyboard.open("Wachtwoord", domoticzPasswordLabel.inputText, updateDomoticzPasswordLabel);
+		}
+	}
+	IconButton {
+		id: domoticzPasswordLabelButton;
+		width: 40
+		iconSource: "./drawables/edit.png"
+
+		anchors {
+			left: domoticzPasswordLabel.right
+			leftMargin: 6
+			top: domoticzPasswordLabel.top
+		}
+
+		bottomClickMargin: 3
+		onClicked: {
+			qkeyboard.open("Wachtwoord", domoticzPasswordLabel.inputText, updateDomoticzPasswordLabel);
+		}
+	}
 
 }

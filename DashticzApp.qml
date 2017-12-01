@@ -17,13 +17,12 @@ App {
 	property variant devices : []
 	property bool devicesReceived: false
 	
-	property string username: "YWRtaW4="
-	property string password: "U21hcnQyMDA0cg=="
-	
 	property DashticzSettings dashticzSettings
 	property variant settings: { 
-		"domoticzHost": "192.168.1.10",
-		"domoticzPort": "8080",
+		"domoticzHost": "",
+		"domoticzPort": "",
+		"domoticzUsername" : "",
+		"domoticzPassword" : "",
 	}
 
 	function init() {
@@ -53,7 +52,7 @@ App {
 	
 	function domoticzCall(url,onoff) {
 		var xmlhttp = new XMLHttpRequest();
-		xmlhttp.open("GET", "http://"+settings.domoticzHost+":"+settings.domoticzPort+"/json.htm?username="+username+"&password="+password+"&"+url, true);
+		xmlhttp.open("GET", "http://"+settings.domoticzHost+":"+settings.domoticzPort+"/json.htm?username="+settings.domoticzUsername+"&password="+settings.domoticzPassword+"&"+url, true);
 		xmlhttp.send();
 	}
 	
@@ -66,7 +65,7 @@ App {
 				devicesReceived = true;
 			}
 		}
-		xmlhttp.open("GET", "http://"+settings.domoticzHost+":"+settings.domoticzPort+"/json.htm?username="+username+"&password="+password+"&type=devices&favorite=1&filter=all&used=true&order=Name", true);
+		xmlhttp.open("GET", "http://"+settings.domoticzHost+":"+settings.domoticzPort+"/json.htm?username="+settings.domoticzUsername+"&password="+settings.domoticzPassword+"&type=devices&favorite=1&filter=all&used=true&order=Name", true);
 		xmlhttp.send();
 	}
 
