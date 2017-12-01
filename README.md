@@ -12,9 +12,13 @@ Dashticz variant for Eneco Toon
 
 # Manual Installation
 1.) Download zip from this repository, unzip contents to a folder named 'dashticz' and upload this folder to: '/HCBv2/qml/apps/'
+
 2.) Add 'dashticz' to the array of 'appsToLoad' in '/HCBv2/qml/qb/base/Globals.qml'
+
 3.) Reboot :)
+
 4.) Click on 'Instellingen' to enter ip, port, username and password
+
 
 
 
