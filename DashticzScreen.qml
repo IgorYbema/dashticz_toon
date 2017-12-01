@@ -72,8 +72,10 @@ Screen {
 		   	SwitchItem {
 				idx: app.devices[index]['idx']
 				type: app.devices[index]['Type']
+				subtype: app.devices[index]['SubType']
 				title: app.devices[index]['Name']
-				status: app.devices[index]['Data']
+				image: app.devices[index]['Image']
+				data: app.devices[index]['Data']
 				lastupdate: app.devices[index]['LastUpdate']
 			}
 		}

@@ -3,15 +3,15 @@ import BasicUIControls 1.0
 
 Item {
 	id: switchTile
-	width:177
+	width:165
 	height:75
+	
+	visible: (type == "Group") ? true : false;
 	
 	property string idx;
 	property string title;
 	property string type;
-	property string subtype;
-	property string image;
-	property string data;
+	property string status;
 	property string lastupdate;
 	
 	property color colorLight: "#f0f0f0"
@@ -21,7 +21,6 @@ Item {
 	property color bckgColorDown: "#A8A8A8"
 	
 	state: "up"
-	visible: (image == "Light" || type == "Group" || (subtype == "Percentage" && image == "Computer") || image == "Fan") ? true : false;
 
 	states: [
 		State {
@@ -44,11 +43,9 @@ Item {
         anchors.fill: parent
         onPressed: {
 			
-			if(data=="Off") data="On";
-			else data="Off";
-			
-			if(type == "Group") app.domoticzCall("type=command&param=switchscene&idx="+idx+"&switchcmd="+data,data);
-			else app.domoticzCall("type=command&param=switchlight&idx="+idx+"&switchcmd="+data,data);
+			if(status=="Off") status="On";
+			else status="Off";
+			app.domoticzCall("type=command&param=switchlight&idx="+idx+"&switchcmd="+status,status);
 			
 			switchTile.state = "down"
 		}
@@ -62,8 +59,8 @@ Item {
 
 		Rectangle {
 			id: switch1BG
-			width:parent.width
-			height:parent.height
+			width:165
+			height:75
 			radius:3
 			color: bckgColorUp
 		}
@@ -72,65 +69,22 @@ Item {
 			id: switch1Button
 			anchors {
 			   top: parent.top
-			   topMargin: 11
+			   topMargin: 10
 			   left: parent.left
 			   leftMargin: 10
 			}
-			visible: (image == "Light") ? true : false;
 			width: 30
 			height: 38
-			source: (data === "On") ? "./drawables/bulb_on.png" : "./drawables/bulb_off.png"
-		}
-		
-		Image {
-			id: group1Button
-			anchors {
-			   top: parent.top
-			   topMargin: 11
-			   left: parent.left
-			   leftMargin: 10
-			}
-			visible: (type == "Group") ? true : false;
-			width: 30
-			height: 38
-			source: (data === "On") ? "./drawables/group_on.png" : "./drawables/group_off.png"
-		}
-		
-		Image {
-			id: fan1Button
-			anchors {
-				top: parent.top
-			   	topMargin: 11
-				left: parent.left
-				leftMargin: 10
-			}
-			visible: (image == "Fan") ? true : false;
-			width: 30
-			height: 38
-			source: (data === "On") ? "./drawables/fan_on.png" : "./drawables/fan_off.png"
-		}
-		
-		Image {
-			id: computer1Button
-			anchors {
-				top: parent.top
-			   	topMargin: 11
-				left: parent.left
-				leftMargin: 10
-			}
-			visible: (subtype == "Percentage" && image == "Computer") ? true : false;
-			width: 30
-			height: 38
-			source: "./drawables/harddisk.png"
+			source: (status == "On") ? "./drawables/group_on.png" : "./drawables/group_off.png"
 		}
 
     	Text {
         	id: switch1Title
         	anchors {
-				top: parent.top
-				topMargin: 7
-				left: parent.left
-				leftMargin: 50
+			   	top: parent.top
+				topMargin: 10
+				left: switch1Button.right
+				leftMargin: 10
         	}
         	font {
 				family: qfont.semiBold.name
@@ -152,7 +106,7 @@ Item {
 				pixelSize: 12
         	}
         	color: colorDark
-        	text: data
+        	text: status
     	}
 
 		Text {
