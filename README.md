@@ -19,7 +19,7 @@ Dashticz variant for Eneco Toon
 
 4.) Click on the new (bulb) icon in the notification-bar
 
-5.) Click on 'Instellingen' to enter ip, port, username and password
+5.) Click on 'Instellingen' to enter ip, port, username and password (enter base64 encoded username & password)
 
 
 
