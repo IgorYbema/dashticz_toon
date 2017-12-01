@@ -11,7 +11,7 @@ Item {
 	property string type;
 	property string subtype;
 	property string image;
-	property string data;
+	property string switchdata;
 	property string lastupdate;
 	
 	property color colorLight: "#f0f0f0"
@@ -44,11 +44,11 @@ Item {
         anchors.fill: parent
         onPressed: {
 			
-			if(data=="Off") data="On";
-			else data="Off";
+			if(switchdata=="Off") switchdata="On";
+			else switchdata="Off";
 			
-			if(type == "Group") app.domoticzCall("type=command&param=switchscene&idx="+idx+"&switchcmd="+data,data);
-			else app.domoticzCall("type=command&param=switchlight&idx="+idx+"&switchcmd="+data,data);
+			if(type == "Group") app.domoticzCall("type=command&param=switchscene&idx="+idx+"&switchcmd="+switchdata,switchdata);
+			else app.domoticzCall("type=command&param=switchlight&idx="+idx+"&switchcmd="+switchdata,switchdata);
 			
 			switchTile.state = "down"
 		}
@@ -79,7 +79,7 @@ Item {
 			visible: (image == "Light") ? true : false;
 			width: 30
 			height: 38
-			source: (data === "On") ? "./drawables/bulb_on.png" : "./drawables/bulb_off.png"
+			source: (switchdata === "Off") ? "./drawables/bulb_off.png" : "./drawables/bulb_on.png"
 		}
 		
 		Image {
@@ -93,7 +93,7 @@ Item {
 			visible: (type == "Group") ? true : false;
 			width: 30
 			height: 38
-			source: (data === "On") ? "./drawables/group_on.png" : "./drawables/group_off.png"
+			source: (switchdata === "Off") ? "./drawables/group_off.png" : "./drawables/group_on.png"
 		}
 		
 		Image {
@@ -107,7 +107,7 @@ Item {
 			visible: (image == "Fan") ? true : false;
 			width: 30
 			height: 38
-			source: (data === "On") ? "./drawables/fan_on.png" : "./drawables/fan_off.png"
+			source: (switchdata === "Off") ? "./drawables/fan_off.png" : "./drawables/fan_on.png"
 		}
 		
 		Image {
@@ -152,7 +152,7 @@ Item {
 				pixelSize: 12
         	}
         	color: colorDark
-        	text: data
+        	text: switchdata
     	}
 
 		Text {

@@ -75,7 +75,7 @@ Screen {
 				subtype: app.devices[index]['SubType']
 				title: app.devices[index]['Name']
 				image: app.devices[index]['Image']
-				data: app.devices[index]['Data']
+				switchdata: app.devices[index]['Data']
 				lastupdate: app.devices[index]['LastUpdate']
 			}
 		}
