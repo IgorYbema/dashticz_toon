@@ -4,19 +4,22 @@ import BxtClient 1.0
 
 Screen {
 	id: dashticzSettingsScreen
+	screenTitleIconUrl: "drawables/dashticzIcon.png"
+	screenTitle: "Dashticz / Instellingen"
 
-	hasBackButton: true
+	hasBackButton: false
 	hasHomeButton: false
 	hasCancelButton: true
 
-	screenTitle: "Dashticz Instellingen"
 
 	onShown: {
 		addCustomTopRightButton("Opslaan");
-		domoticzHostLabel.inputText = app.settings.domoticzHost;
-		domoticzPortLabel.inputText = app.settings.domoticzPort;
-		domoticzUsernameLabel.inputText = app.settings.domoticzUsername;
-		domoticzPasswordLabel.inputText = app.settings.domoticzPassword;
+		if(domoticzHostLabel.inputText=="") 	domoticzHostLabel.inputText = app.settings.domoticzHost;
+		if(domoticzPortLabel.inputText=="") 	domoticzPortLabel.inputText = app.settings.domoticzPort;
+		if(domoticzUsernameLabel.inputText=="") domoticzUsernameLabel.inputText = app.settings.domoticzUsername;
+		if(domoticzPasswordLabel.inputText=="") domoticzPasswordLabel.inputText = app.settings.domoticzPassword;
+		if(domoticzTileIDXLabel.inputText=="") 	domoticzTileIDXLabel.inputText = app.settings.domoticzTileIDX;
+		if(ovHalteLabel.inputText=="") 			ovHalteLabel.inputText = app.settings.ovHalte;
 	}
 
 	onCustomButtonClicked: {
@@ -25,14 +28,17 @@ Screen {
 		temp.domoticzPort = domoticzPortLabel.inputText;
 		temp.domoticzUsername = domoticzUsernameLabel.inputText;
 		temp.domoticzPassword = domoticzPasswordLabel.inputText;
+		temp.domoticzTileIDX = domoticzTileIDXLabel.inputText;
+		temp.ovHalte = ovHalteLabel.inputText;
 		app.settings = temp;
 
 		var saveFile = new XMLHttpRequest();
 		saveFile.open("PUT", "file:///HCBv2/qml/apps/dashticz/dashticz.settings");
 		saveFile.send(JSON.stringify(app.settings));
 		
-		hide();
-		app.getDevices();
+		//hide();
+		app.settingsLoaded=false
+		stage.openFullscreen(app.dashticzScreenUrl);
 	}
 
 
@@ -83,6 +89,22 @@ Screen {
 	function updateDomoticzPasswordLabel(text) {
 		if (text) domoticzPasswordLabel.inputText = text;
 	}
+	
+	function updateovHalteLabel(text) {
+		if (text) ovHalteLabel.inputText = text;
+	}
+	
+	function updateDomoticzTileIDXLabel(text) {
+		if (text) domoticzTileIDXLabel.inputText = text;
+	}
+
+	function updateDashticzPortLabel(text) {
+		if (text) {
+			if (text.match(/^[0-9]*$/)) {
+				dashticzPortLabel.inputText = text;
+			}
+		}
+	}
 
 
 	// domoticz
@@ -90,7 +112,7 @@ Screen {
 		id: domoticzText
 		font.pixelSize: 16
 		font.family: qfont.semiBold.name
-		text: "Domoticz URL"
+		text: "Domoticz"
 		anchors {
 			top: parent.top
 			topMargin: 20
@@ -98,11 +120,12 @@ Screen {
 			leftMargin: 16
 		}
 	}
+	
 	EditTextLabel {
 		id: domoticzHostLabel
 		width: 350
 		height: 35
-		leftText: "Host"
+		leftText: "Host (zonder http://)"
 		leftTextAvailableWidth: 200
 
 		anchors {
@@ -115,23 +138,6 @@ Screen {
 			qkeyboard.open("Hostnaam", domoticzHostLabel.inputText, updateDomoticzHostLabel,hostnameValidate);
 		}
 	}
-	IconButton {
-		id: domoticzHostLabelButton;
-		width: 40
-		iconSource: "./drawables/edit.png"
-
-		anchors {
-			left: domoticzHostLabel.right
-			leftMargin: 6
-			top: domoticzHostLabel.top
-		}
-
-		bottomClickMargin: 3
-		onClicked: {
-			qkeyboard.open("Hostnaam", domoticzHostLabel.inputText, updateDomoticzHostLabel,hostnameValidate);
-		}
-	}
-
 
 	EditTextLabel {
 		id: domoticzPortLabel
@@ -150,69 +156,55 @@ Screen {
 			qnumKeyboard.open("Poort", domoticzPortLabel.inputText, "Nummer", 1 , updateDomoticzPortLabel,numValidate);
 		}
 	}
-	IconButton {
-		id: domoticzPortLabelButton;
-		width: 40
-		iconSource: "./drawables/edit.png"
-
-		anchors {
-			left: domoticzPortLabel.right
-			leftMargin: 6
-			top: domoticzPortLabel.top
-		}
-
-		bottomClickMargin: 3
-		onClicked: {
-			qnumKeyboard.open("Poort", domoticzPortLabel.inputText, "Nummer", 1 , updateDomoticzPortLabel,numValidate);
-		}
-	}
-
 
 	EditTextLabel {
-		id: domoticzUsernameLabel
+		id: domoticzTileIDXLabel
 		width: 350
 		height: 35
-		leftText: "Gebruikersnaam"
+		leftText: "Tile IDX (max 6)"
 		leftTextAvailableWidth: 200
 
 		anchors {
-			left: domoticzPortLabel.left
+			left: domoticzHostLabel.left
 			top: domoticzPortLabel.bottom                       
 			topMargin: 10
 		}
 
 		onClicked: {
-			qkeyboard.open("Gebruikersnaam", domoticzUsernameLabel.inputText, updateDomoticzUsernameLabel);
+			qkeyboard.open("Tile IDX (max 6)", domoticzTileIDXLabel.inputText, updateDomoticzTileIDXLabel);
 		}
 	}
-	IconButton {
-		id: domoticzUsernameLabelButton;
-		width: 40
-		iconSource: "./drawables/edit.png"
+
+	EditTextLabel {
+		id: domoticzUsernameLabel
+		width: 350
+		height: 35
+		leftText: "Gebruikersnaam (base64encoded)"
+		leftTextAvailableWidth: 200
 
 		anchors {
-			left: domoticzUsernameLabel.right
-			leftMargin: 6
-			top: domoticzUsernameLabel.top
+			left: domoticzHostLabel.right                   
+			leftMargin: 20
+			top: domoticzText.bottom                      
+			topMargin: 10
 		}
 
-		bottomClickMargin: 3
 		onClicked: {
 			qkeyboard.open("Gebruikersnaam", domoticzUsernameLabel.inputText, updateDomoticzUsernameLabel);
 		}
 	}
-
 	
 	EditTextLabel {
 		id: domoticzPasswordLabel
 		width: 350
 		height: 35
-		leftText: "Wachtwoord"
+		leftText: "Wachtwoord (base64encoded)"
 		leftTextAvailableWidth: 200
 
 		anchors {
-			left: domoticzUsernameLabel.left
-			top: domoticzUsernameLabel.bottom                       
+			left: domoticzHostLabel.right                   
+			leftMargin: 20
+			top: domoticzUsernameLabel.bottom                      
 			topMargin: 10
 		}
 
@@ -220,20 +212,35 @@ Screen {
 			qkeyboard.open("Wachtwoord", domoticzPasswordLabel.inputText, updateDomoticzPasswordLabel);
 		}
 	}
-	IconButton {
-		id: domoticzPasswordLabelButton;
-		width: 40
-		iconSource: "./drawables/edit.png"
+	
+	//ov
+	Text {
+		id: dashticzText
+		font.pixelSize: 16
+		font.family: qfont.semiBold.name
+		text: "OV Informatie"
+		anchors {
+			left: domoticzText.left
+			top: domoticzTileIDXLabel.bottom                       
+			topMargin: 30
+		}
+	}
+	
+	EditTextLabel {
+		id: ovHalteLabel
+		width: 350
+		height: 35
+		leftText: "Station / Halte"
+		leftTextAvailableWidth: 200
 
 		anchors {
-			left: domoticzPasswordLabel.right
-			leftMargin: 6
-			top: domoticzPasswordLabel.top
+			left: dashticzText.left
+			top: dashticzText.bottom                       
+			topMargin: 10
 		}
 
-		bottomClickMargin: 3
 		onClicked: {
-			qkeyboard.open("Wachtwoord", domoticzPasswordLabel.inputText, updateDomoticzPasswordLabel);
+			qkeyboard.open("Station / Halte", ovHalteLabel.inputText, updateovHalteLabel);
 		}
 	}
 

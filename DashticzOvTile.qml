@@ -5,12 +5,12 @@ import BasicUIControls 1.0;
 
 
 Tile {
-	id: dashticzTile
+	id: dashticzOvTile
 
 	function init() {}
 
 	onClicked: {
-		stage.openFullscreen(app.dashticzScreenUrl);
+		stage.openFullscreen(app.dashticzOvUrl);
 	}
 	
 	Image {
@@ -37,6 +37,6 @@ Tile {
 			pixelSize: qfont.tileTitle
 		}
 		color: colors.tileTitleColor
-		text: "Dashticz"
+		text: "OV"
 	}
 }

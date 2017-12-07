@@ -6,78 +6,73 @@ Screen {
 	screenTitleIconUrl: "drawables/dashticzIcon.png"
 	screenTitle: "Dashticz"
 	
+	hasBackButton: false
 	property DashticzApp app;
 	
-	onShown: {
-		if (!app.devicesReceived){
-			app.loadSettings();
+	function goToScreen(){
+		app.runningFromTile=false
+		if(app.settingsLoaded){
+			settingsTimer.running = false
+			if(app.settings.domoticzHost!==""){
+				stage.openFullscreen(app.dashticzSwitchesUrl);
+			}
+			else if(app.settings.ovHalte!==""){
+				stage.openFullscreen(app.dashticzOvUrl);
+			}
+			else {
+				app.noApps=true;
+			}
+		}
+		else {
+			settingsTimer.running = true
+			app.loadSettings()
 		}
 	}
+			
+	onShown: {
+		goToScreen();
+	}
 	
-	Row {
-		id:btnRow
-		spacing:10
+	Text {
+		id:loadingSettingsText
+		text: "Bezig met laden..."
+		font.pointSize: 12
+		visible: !app.noApps
+		color: colors.clockTileColor
 		anchors {
 			top: parent.top
-			topMargin: 20
+			topMargin: 75
 			left: parent.left
 			leftMargin: 32
 		}
-
-		StandardButton {
-			id: btnConfigScreen
-			width: 100
-			height: 45
-			text: "Instellingen"
-			onClicked: {
-				if (app.dashticzSettings) {
-					app.dashticzSettings.show();
-				}
-			}
-		}
+	}
+	
+	DashticzTabs {
+		visible: app.noApps
 	}
 	
 	Text {
 		id:loadingText
-		text: "Bezig met laden..."
+		text: "Ga naar Instellingen om te beginnen!"
 		font.pointSize: 12
+		visible: app.noApps
 		color: colors.clockTileColor
-		visible: !app.devicesReceived
 		anchors {
-			top: btnRow.bottom
-			topMargin: 10
+			top: parent.top
+			topMargin: 75
 			left: parent.left
 			leftMargin: 32
 		}
 	}
-
-	Grid {
-		spacing:10
-		columns: 4
-		rows:5
-		visible: app.devicesReceived
-		anchors {
-			top: btnRow.bottom
-			topMargin: 10
-			left: parent.left
-			leftMargin: 32
+	
+	Timer  {
+        id: settingsTimer
+        interval: 2000
+        running: false
+        repeat: true
+        onTriggered: {
+			goToScreen()
 		}
-
-		Repeater {
-			id: switches
-			model: app.devices
-			onItemAdded: {
-				console.log("Dashticz IDX Added: "+ app.devices[index]['idx']+" > "+ app.devices[index]['Name']);
-           	}
-		   	SwitchItem {
-				idx: app.devices[index]['idx']
-				type: app.devices[index]['Type']
-				subtype: app.devices[index]['SubType']
-				title: app.devices[index]['Name']
-				image: app.devices[index]['Image']
-				switchdata: app.devices[index]['Data']
-				lastupdate: app.devices[index]['LastUpdate']
-			}
-		}
-	}
+    }
+	
 }

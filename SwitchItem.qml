@@ -2,7 +2,7 @@ import QtQuick 1.1
 import BasicUIControls 1.0
 
 Item {
-	id: switchTile
+	id: switchItem
 	width:177
 	height:75
 	
@@ -12,7 +12,9 @@ Item {
 	property string subtype;
 	property string image;
 	property string switchdata;
+	property string switchtype;
 	property string lastupdate;
+	property string hardwarename;
 	
 	property color colorLight: "#f0f0f0"
 	property color colorMedium: "#A8A8A8"
@@ -21,7 +23,7 @@ Item {
 	property color bckgColorDown: "#A8A8A8"
 	
 	state: "up"
-	visible: (image == "Light" || type == "Group" || (subtype == "Percentage" && image == "Computer") || image == "Fan") ? true : false;
+	visible: (image == "Light" || hardwarename=="DownloadSensor" || hardwarename=="UploadSensor" || type == "Group" || subtype == "Visibility" || (subtype == "Percentage" && image == "Computer") || image == "Fan") ? true : false;
 
 	states: [
 		State {
@@ -44,16 +46,19 @@ Item {
         anchors.fill: parent
         onPressed: {
 			
-			if(switchdata=="Off") switchdata="On";
-			else switchdata="Off";
-			
-			if(type == "Group") app.domoticzCall("type=command&param=switchscene&idx="+idx+"&switchcmd="+switchdata,switchdata);
-			else app.domoticzCall("type=command&param=switchlight&idx="+idx+"&switchcmd="+switchdata,switchdata);
-			
-			switchTile.state = "down"
+			if(image == "Light" || type == "Group" || image == "Fan"){
+				if(switchdata=="Off") switchdata="On";
+				else switchdata="Off";
+				
+				if(switchtype == "Push On Button") switchdata="On";
+				if(type == "Group") app.domoticzCall("type=command&param=switchscene&idx="+idx+"&switchcmd="+switchdata,switchdata);
+				else app.domoticzCall("type=command&param=switchlight&idx="+idx+"&switchcmd="+switchdata,switchdata);
+
+				switchItem.state = "down"
+			}
 		}
 		onReleased: {
-			switchTile.state = "up"
+			switchItem.state = "up"
 		}
     }
 
@@ -76,10 +81,38 @@ Item {
 			   left: parent.left
 			   leftMargin: 10
 			}
-			visible: (image == "Light") ? true : false;
+			visible: (switchtype == "On/Off" || switchtype == "Dimmer") ? true : false;
 			width: 30
 			height: 38
 			source: (switchdata === "Off") ? "./drawables/bulb_off.png" : "./drawables/bulb_on.png"
+		}
+		
+		Image {
+			id: pushon1Button
+			anchors {
+			   top: parent.top
+			   topMargin: 11
+			   left: parent.left
+			   leftMargin: 10
+			}
+			visible: (switchtype == "Push On Button") ? true : false;
+			width: 30
+			height: 38
+			source: "./drawables/pushon.png"
+		}
+		
+		Image {
+			id: pushoff1Button
+			anchors {
+			   top: parent.top
+			   topMargin: 11
+			   left: parent.left
+			   leftMargin: 10
+			}
+			visible: (switchtype == "Push Off Button") ? true : false;
+			width: 30
+			height: 38
+			source: "./drawables/pushoff.png"
 		}
 		
 		Image {
@@ -122,6 +155,48 @@ Item {
 			width: 30
 			height: 38
 			source: "./drawables/harddisk.png"
+		}
+		
+		Image {
+			id: eye1Button
+			anchors {
+				top: parent.top
+			   	topMargin: 11
+				left: parent.left
+				leftMargin: 10
+			}
+			visible: (subtype == "Visibility") ? true : false;
+			width: 30
+			height: 38
+			source: "./drawables/eye.png"
+		}
+		
+		Image {
+			id: download1Button
+			anchors {
+				top: parent.top
+			   	topMargin: 11
+				left: parent.left
+				leftMargin: 10
+			}
+			visible: (hardwarename == "DownloadSensor") ? true : false;
+			width: 30
+			height: 38
+			source: "./drawables/download.png"
+		}
+		
+		Image {
+			id: upload1Button
+			anchors {
+				top: parent.top
+			   	topMargin: 11
+				left: parent.left
+				leftMargin: 10
+			}
+			visible: (hardwarename == "UploadSensor") ? true : false;
+			width: 30
+			height: 38
+			source: "./drawables/upload.png"
 		}
 
     	Text {
