@@ -81,7 +81,7 @@ Item {
 			   left: parent.left
 			   leftMargin: 10
 			}
-			visible: (switchtype == "On/Off" || switchtype == "Dimmer") ? true : false;
+			visible: ((switchtype == "On/Off" || switchtype == "Dimmer") && image!=="Fan") ? true : false;
 			width: 30
 			height: 38
 			source: (switchdata === "Off") ? "./drawables/bulb_off.png" : "./drawables/bulb_on.png"
