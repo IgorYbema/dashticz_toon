@@ -64,7 +64,7 @@ Screen {
 	
 	Timer  {
         id: switchesTimer
-        interval: 600000
+        interval: 60000
         running: false
         repeat: true
         onTriggered: {

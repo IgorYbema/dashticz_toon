@@ -23,7 +23,7 @@ Item {
 	property color bckgColorDown: "#A8A8A8"
 	
 	state: "up"
-	visible: (image == "Light" || hardwarename=="DownloadSensor" || hardwarename=="UploadSensor" || type == "Group" || subtype == "Visibility" || (subtype == "Percentage" && image == "Computer") || image == "Fan") ? true : false;
+	visible: (image == "Light" || hardwarename=="DownloadSensor" || hardwarename=="UploadSensor" || type == "Group" || type == "Temp" || type == "Scene" || subtype == "Visibility" || (subtype == "Percentage" && image == "Computer") || image == "Fan") ? true : false;
 
 	states: [
 		State {
@@ -46,12 +46,12 @@ Item {
         anchors.fill: parent
         onPressed: {
 			
-			if(image == "Light" || type == "Group" || image == "Fan"){
+			if(image == "Light" || type == "Group" || type == "Scene" || image == "Fan"){
 				if(switchdata=="Off") switchdata="On";
 				else switchdata="Off";
 				
-				if(switchtype == "Push On Button") switchdata="On";
-				if(type == "Group") app.domoticzCall("type=command&param=switchscene&idx="+idx+"&switchcmd="+switchdata,switchdata);
+				if(switchtype == "Push On Button" || type == "Scene") switchdata="On";
+				if(type == "Group" || type == "Scene") app.domoticzCall("type=command&param=switchscene&idx="+idx+"&switchcmd="+switchdata,switchdata);
 				else app.domoticzCall("type=command&param=switchlight&idx="+idx+"&switchcmd="+switchdata,switchdata);
 
 				switchItem.state = "down"
@@ -95,7 +95,7 @@ Item {
 			   left: parent.left
 			   leftMargin: 10
 			}
-			visible: (switchtype == "Push On Button") ? true : false;
+			visible: (switchtype == "Push On Button" || type == "Scene") ? true : false;
 			width: 30
 			height: 38
 			source: "./drawables/pushon.png"
@@ -169,6 +169,20 @@ Item {
 			width: 30
 			height: 38
 			source: "./drawables/eye.png"
+		}
+		
+		Image {
+			id: temp1Button
+			anchors {
+				top: parent.top
+			   	topMargin: 11
+				left: parent.left
+				leftMargin: 10
+			}
+			visible: (type == "Temp") ? true : false;
+			width: 30
+			height: 38
+			source: "./drawables/temp.png"
 		}
 		
 		Image {
